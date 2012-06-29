@@ -7,6 +7,17 @@ module Hanover
       self.removed = GSet.new
     end
     
+    def self.from_json(json)
+      h = JSON.parse json, symbolize_names: true
+      raise ArgumentError.new 'unexpected type field in JSON' unless h[:type] == 'TwoPSet'
+
+      tps = new
+      tps.added = GSet.from_json h[:a].to_json
+      tps.removed = GSet.from_json h[:r].to_json
+      
+      return tps
+    end
+    
     def members
       self.added.members - self.removed.members
     end
@@ -26,12 +37,12 @@ module Hanover
       self.added.merge other.removed
     end
     
-    def to_json
+    def to_json(*args)
       {
-        type: '2pSet',
+        type: 'TwoPSet',
         a: self.added,
         r: self.removed
-        }.to_json
+        }.to_json *args
     end
   end
 end

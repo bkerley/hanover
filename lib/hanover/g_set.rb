@@ -23,11 +23,11 @@ module Hanover
       self.members.include? atom
     end
     
-    def to_json
+    def to_json(*args)
       {
         type: 'GSet',
         a: self.members.to_a
-        }.to_json
+        }.to_json(*args)
     end
     
     def merge(other)
