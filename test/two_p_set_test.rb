@@ -16,6 +16,24 @@ class TwoPSetTest < HanoverCase
       refute_includes subject.members, :bravo
     end
     
+    should 'merge' do
+      other = subject.class.new
+      
+      subject.add 'echo'
+      other.add 'foxtrot'
+      subject.add 'george'
+      other.remove 'george'
+      
+      assert_includes subject.members, 'george'
+      
+      subject.merge other
+      
+      assert_includes subject.members, 'echo'
+      assert_includes subject.members, 'foxtrot'
+      
+      refute_includes subject.members, 'george'
+    end
+    
     should 'round trip from JSON' do
       subject.add 'charlie'
       subject.add 'delta'

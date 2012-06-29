@@ -34,7 +34,7 @@ module Hanover
     
     def merge(other)
       self.added.merge other.added
-      self.added.merge other.removed
+      self.removed.merge other.removed
     end
     
     def to_json(*args)
