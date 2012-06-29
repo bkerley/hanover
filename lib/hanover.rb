@@ -7,4 +7,6 @@ module Hanover
   # Your code goes here...
 end
 
-require_relative 'hanover/g_set'
+%w{g_set 2p_set}.each do |f|
+  require_relative File.join('hanover', f)
+end
