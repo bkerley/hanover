@@ -35,7 +35,18 @@ class PersistenceTest < HanoverCase
       assert_includes subject, 'bravo'
     end
     
-    should 'support parallel adds consistently'
+    should 'support parallel adds consistently' do
+      other = Persistence.find subject.key
+      subject.add 'alpha'
+      other.add 'bravo'
+      subject.reload
+      other.reload
+      
+      assert_includes subject, 'alpha'
+      assert_includes subject, 'bravo'
+      assert_includes other, 'alpha'
+      assert_includes other, 'bravo'
+    end
     should 'save after add'
   end
 end

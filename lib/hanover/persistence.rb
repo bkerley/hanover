@@ -1,5 +1,5 @@
 module Hanover
-  class Persistence < Delegator
+  class Persistence
     attr_reader :key, :content
     def initialize(content, key = nil)
       @content = content
@@ -9,8 +9,14 @@ module Hanover
       save
     end
     
-    def __getobj__
-      @content
+    def respond_to?(name)
+      methods.include?(name) || @content.respond_to?(name)
+    end
+    
+    def method_missing(name, *args, &block)
+      result = @content.send name, *args, &block
+      save unless @robject.raw_data == @content.to_json
+      result
     end
     
     def initialize_from_key(key)
@@ -19,6 +25,15 @@ module Hanover
       @klass = Hanover.const_get(@robject.data['type'])
       @content = @klass.from_json @robject.raw_data
       perform_merges
+    end
+    
+    def reload
+      @robject.reload
+      perform_merges
+    end
+    
+    def inspect
+      "#<Hanover::Persistence::0x#{object_id.to_s(16)} @key=#{@robject.key} #{@content.inspect}>"
     end
     
     def self.find(key)
@@ -35,8 +50,10 @@ module Hanover
     private
     def save
       create unless @robject
-
-      update
+      @robject.raw_data = @content.to_json
+      @robject.content_type = 'application/json'
+      @robject.store
+      reload
     end
     
     def create
@@ -48,14 +65,10 @@ module Hanover
     end
     
     def perform_merges
+      @content.merge @klass.from_json @robject.raw_data
       return unless @robject.conflict?
       
-       @robject.siblings.each {|s| @content.merge s.raw_data }
-    end
-    
-    def update
-      @robject.reload
-      perform_merges
+       @robject.siblings.each {|s| @content.merge @klass.from_json s.raw_data }
     end
     
     def bucket
