@@ -8,12 +8,12 @@ class TwoPSetTest < HanoverCase
       subject.add :alpha
       subject.add :bravo
       
-      assert_includes subject.members, :alpha
-      assert_includes subject.members, :bravo
+      assert_includes subject, :alpha
+      assert_includes subject, :bravo
       
       subject.remove :bravo
       
-      refute_includes subject.members, :bravo
+      refute_includes subject, :bravo
     end
     
     should 'merge' do
@@ -28,10 +28,10 @@ class TwoPSetTest < HanoverCase
       
       subject.merge other
       
-      assert_includes subject.members, 'echo'
-      assert_includes subject.members, 'foxtrot'
+      assert_includes subject, 'echo'
+      assert_includes subject, 'foxtrot'
       
-      refute_includes subject.members, 'george'
+      refute_includes subject, 'george'
     end
     
     should 'round trip from JSON' do

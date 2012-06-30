@@ -7,8 +7,8 @@ class GSetTest < HanoverCase
       subject.add :alpha
       subject.add :bravo
       
-      assert_includes subject.members, :alpha
-      assert_includes subject.members, :bravo
+      assert_includes subject, :alpha
+      assert_includes subject, :bravo
     end
     
     should 'merge' do
@@ -19,8 +19,8 @@ class GSetTest < HanoverCase
       
       subject.merge other
       
-      assert_includes subject.members, :charlie
-      assert_includes subject.members, :delta
+      assert_includes subject, :charlie
+      assert_includes subject, :delta
     end
     
     should 'json round trip' do
