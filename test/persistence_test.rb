@@ -40,13 +40,13 @@ class PersistenceTest < HanoverCase
       subject.add 'alpha'
       other.add 'bravo'
       subject.reload
-      other.reload
+      
+      third = Persistence.find subject.key
       
       assert_includes subject, 'alpha'
       assert_includes subject, 'bravo'
-      assert_includes other, 'alpha'
-      assert_includes other, 'bravo'
+      assert_includes third, 'alpha'
+      assert_includes third, 'bravo'
     end
-    should 'save after add'
   end
 end

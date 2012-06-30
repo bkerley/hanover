@@ -22,8 +22,9 @@ module Hanover
     def initialize_from_key(key)
       @key = key
       @robject = bucket.get key
-      @klass = Hanover.const_get(@robject.data['type'])
-      @content = @klass.from_json @robject.raw_data
+
+      get_klass
+      @content = @klass.new
       perform_merges
     end
     
@@ -65,10 +66,19 @@ module Hanover
     end
     
     def perform_merges
-      @content.merge @klass.from_json @robject.raw_data
-      return unless @robject.conflict?
-      
-       @robject.siblings.each {|s| @content.merge @klass.from_json s.raw_data }
+      if @robject.conflict?
+         @robject.siblings.each {|s| @content.merge @klass.from_json s.raw_data }
+       else
+         @content.merge @klass.from_json @robject.raw_data
+       end
+    end
+    
+    def get_klass
+      if @robject.conflict?
+        @klass = Hanover.const_get @robject.siblings.first.data['type']
+      else
+        @klass = Hanover.const_get @robject.data['type']
+      end
     end
     
     def bucket
