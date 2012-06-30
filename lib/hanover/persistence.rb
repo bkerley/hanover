@@ -1,5 +1,5 @@
 module Hanover
-  class Persistence
+  class Persistence < Delegator
     attr_reader :key, :content
     def initialize(content, key = nil)
       @content = content
@@ -7,6 +7,10 @@ module Hanover
       @klass = @content.class
       
       save
+    end
+    
+    def __getobj__
+      @content
     end
     
     def initialize_from_key(key)

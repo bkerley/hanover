@@ -23,8 +23,18 @@ class PersistenceTest < HanoverCase
   context 'a wrapped GSet' do
     subject { Persistence.new GSet.new }
 
-    should 'name itself'
-    should 'delegate adding elements to the set'
+    should 'name itself' do
+      assert subject.key
+    end
+    
+    should 'delegate adding elements to the set' do
+      subject.add 'alpha'
+      subject.add 'bravo'
+      
+      assert_includes subject, 'alpha'
+      assert_includes subject, 'bravo'
+    end
+    
     should 'support parallel adds consistently'
     should 'save after add'
   end
