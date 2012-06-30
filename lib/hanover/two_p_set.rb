@@ -18,6 +18,10 @@ module Hanover
       return tps
     end
     
+    def include?(atom)
+      members.include? atom
+    end
+    
     def members
       self.added.members - self.removed.members
     end
