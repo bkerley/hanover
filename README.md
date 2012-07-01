@@ -1,6 +1,6 @@
 # Hanover
 
-TODO: Write a gem description
+Hanover is a Riak-based implementation of a couple CRDTs.
 
 ## Installation
 
