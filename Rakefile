@@ -11,13 +11,15 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-task :test => :riak_running
+task :test, [:host, :port] => :riak_running
 
-task :riak_running do
+task :riak_running, [:host, :port] do |task, args|
+  host = args.host || "localhost"
+  port = args.port || 8091
   begin
-    sh 'curl -s localhost:8091 > /dev/null'
+    sh "curl -s #{host}:#{port} > /dev/null"
   rescue => e
-    puts "Couldn't see that Riak is running on port 8091. Sad trombone. :("
+    puts "Couldn't see that Riak is running on #{host} port #{port}. Sad trombone. :("
     raise e
   end
 end
