@@ -2,7 +2,7 @@ require 'set'
 require 'json'
 require 'riak'
 
-require "hanover/version"
+require_relative File.join('hanover', 'version')
 
 module Hanover
   # Your code goes here...
