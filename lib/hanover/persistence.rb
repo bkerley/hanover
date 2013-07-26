@@ -1,6 +1,6 @@
 module Hanover
   class Persistence
-    attr_reader :key, :content
+    attr_reader :key, :content, :robject
     def initialize(content, key = nil)
       @content = content
       @key = key
@@ -15,6 +15,7 @@ module Hanover
     
     def method_missing(name, *args, &block)
       result = @content.send name, *args, &block
+      p "#{@robject.raw_data} => #{content.to_json}"
       save unless @robject.raw_data == @content.to_json
       result
     end
@@ -29,8 +30,13 @@ module Hanover
     end
     
     def reload
-      @robject.reload
-      perform_merges
+      begin
+        @robject.reload
+      rescue Riak::Conflict
+        #do nothing
+      ensure
+        perform_merges
+      end
     end
     
     def inspect
@@ -45,7 +51,7 @@ module Hanover
     
     def self.client
       return @client if defined? @client
-      @client = Riak::Client.new http_port: 8091
+      @client = Configuration.client
     end
     
     private
@@ -66,23 +72,30 @@ module Hanover
     end
     
     def perform_merges
+      p "performing merge..."
       if @robject.conflict?
-         @robject.siblings.each {|s| @content.merge @klass.from_json s.raw_data }
-       else
-         @content.merge @klass.from_json @robject.raw_data
-       end
+        p "due to conflict...."
+        @robject.siblings.each {|s| @content.merge(@klass.from_json(s.raw_data)); }
+        @robject.delete
+        Persistence.new(@content)
+      else
+        p "not due to conflict...."
+        @content.merge @klass.from_json(@robject.raw_data)
+      end
     end
     
     def get_klass
       if @robject.conflict?
-        @klass = Hanover.const_get @robject.siblings.first.data['type']
+        @klass = Hanover.const_get(@robject.siblings.first.data['type'])
       else
-        @klass = Hanover.const_get @robject.data['type']
+        @klass = Hanover.const_get(@robject.data['type'])
       end
     end
     
     def bucket
-      self.class.client.bucket 'hanover'
+      bucket = self.class.client.bucket('hanover')
+      bucket.allow_mult = true
+      bucket
     end
   end
 end
