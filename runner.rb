@@ -24,13 +24,7 @@ Riak::RObject.on_conflict do |obj|
   merged = {}
   obj.siblings.each {|sib| merged.merge!(sib.data)}
   p merged.inspect
-  p "new object"
-  resolved = obj.bucket.new
-  p "adding to the data"
-  resolved.data = merged
-  resolved.store
-  p "deleting the old"
-  obj.delete
   p "returning the new"
-  resolved
+  obj.siblings = [merged]
+  obj
 end

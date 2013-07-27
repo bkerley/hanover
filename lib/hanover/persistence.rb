@@ -15,7 +15,6 @@ module Hanover
     
     def method_missing(name, *args, &block)
       result = @content.send name, *args, &block
-      p "#{@robject.raw_data} => #{content.to_json}"
       save unless @robject.raw_data == @content.to_json
       result
     end
@@ -72,14 +71,10 @@ module Hanover
     end
     
     def perform_merges
-      p "performing merge..."
       if @robject.conflict?
-        p "due to conflict...."
-        @robject.siblings.each {|s| @content.merge(@klass.from_json(s.raw_data)); }
-        @robject.delete
-        Persistence.new(@content)
+        @robject.siblings.each {|s| @content.merge(@klass.from_json(s.raw_data))}
+        @robject.siblings = [@content.to_json]
       else
-        p "not due to conflict...."
         @content.merge @klass.from_json(@robject.raw_data)
       end
     end
