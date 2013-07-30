@@ -1,12 +1,8 @@
-require 'shoulda-context'
 require 'minitest/autorun'
+require 'minitest/pride'
 
 require_relative File.join('..', 'lib', 'hanover')
 
-class HanoverCase < MiniTest::Unit::TestCase
-  include Shoulda::Context::Assertions
-  include Shoulda::Context::InstanceMethods
-  extend Shoulda::Context::ClassMethods
-  
+class HanoverCase < Minitest::Test
   include Hanover
 end

@@ -15,8 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Hanover::VERSION
   
-  gem.add_dependency 'riak-client', '~> 1.0.3'
+  gem.add_dependency 'riak-client', '~> 1.2.0'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'minitest'
-  gem.add_development_dependency 'shoulda-context'
 end
