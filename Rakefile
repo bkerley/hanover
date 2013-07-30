@@ -2,6 +2,7 @@
 require 'rake'
 require 'rake/testtask'
 require "bundler/gem_tasks"
+require 'minitest/autorun'
 
 task :default => :test
 

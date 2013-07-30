@@ -1,11 +1,11 @@
 module Hanover
   class Persistence
-    attr_reader :key, :content, :robject
+    attr_reader :key, :klass
+    attr_accessor :content, :robject
     def initialize(content, key = nil)
       @content = content
       @key = key
       @klass = @content.class
-      
       save
     end
     
@@ -72,8 +72,16 @@ module Hanover
     
     def perform_merges
       if @robject.conflict?
-        @robject.siblings.each {|s| @content.merge(@klass.from_json(s.raw_data))}
-        @robject.siblings = [@content.to_json]
+        content = klass.new
+        @robject.siblings.each {|s| content.merge(klass.from_json(s.raw_data))}
+
+        new_robject = Riak::RObject.new(bucket, @key)
+        new_robject.data = content
+        new_robject.content_type = "application/json"
+
+        @robject.siblings = [new_robject]
+        @robject.store
+        @content = content
       else
         @content.merge @klass.from_json(@robject.raw_data)
       end

@@ -44,14 +44,15 @@ class PersistenceTest < HanoverCase
     subject = Persistence.new(GSet.new)
     other = Persistence.find(subject.key)
 
-    subject.add 'alpha'
+    #TODO: order dependent addition isn't good
     other.add 'bravo'
+    subject.add 'alpha'
     subject.reload
 
     third = Persistence.find(subject.key)
     @keys << subject.key << other.key << third.key
 
-    p subject.inspect
+    # p subject.inspect
     assert_includes subject, 'alpha'
     assert_includes subject, 'bravo'
     assert_includes third, 'alpha'

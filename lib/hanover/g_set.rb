@@ -29,6 +29,13 @@ module Hanover
         a: self.members.to_a
         }.to_json(*args)
     end
+
+    def inspect
+      {
+        :type => 'GSet',
+        :a => self.members.to_a
+      }
+    end
     
     def merge(other)
       self.members.merge other.members

@@ -28,3 +28,30 @@ Riak::RObject.on_conflict do |obj|
   obj.siblings = [merged]
   obj
 end
+require './lib/hanover.rb'
+class Runner
+  include Hanover
+  attr_reader :pgset, :other
+
+  def initialize
+    @pgset = Persistence.new(GSet.new)
+    @other = Persistence.find(@pgset.key)
+  end
+
+  def add_from_two
+    other.add "alpha"
+    pgset.add "bravo"
+  end
+
+  def reload
+    pgset.reload
+  end
+
+  def members
+    pgset.members
+  end
+
+  def robject
+    pgset.robject
+  end
+end
