@@ -38,9 +38,14 @@ class Runner
     @other = Persistence.find(@pgset.key)
   end
 
-  def add_from_two
-    other.add "alpha"
-    pgset.add "bravo"
+  def add_from_two(order=false)
+    if order
+      pgset.add "alpha"
+      other.add "bravo"
+    else
+      other.add "alpha"
+      pgset.add "bravo"
+    end
   end
 
   def reload

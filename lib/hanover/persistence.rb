@@ -14,8 +14,8 @@ module Hanover
     end
     
     def method_missing(name, *args, &block)
-      result = @content.send name, *args, &block
-      save unless @robject.raw_data == @content.to_json
+      result = content.send name, *args, &block
+      save unless robject.raw_data == content.to_json
       result
     end
     
@@ -30,7 +30,7 @@ module Hanover
     
     def reload
       begin
-        @robject.reload
+        @robject = bucket.get @key
       rescue Riak::Conflict
         #do nothing
       ensure

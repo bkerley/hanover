@@ -44,9 +44,8 @@ class PersistenceTest < HanoverCase
     subject = Persistence.new(GSet.new)
     other = Persistence.find(subject.key)
 
-    #TODO: order dependent addition isn't good
-    other.add 'bravo'
     subject.add 'alpha'
+    other.add 'bravo'
     subject.reload
 
     third = Persistence.find(subject.key)
@@ -57,6 +56,30 @@ class PersistenceTest < HanoverCase
     assert_includes subject, 'bravo'
     assert_includes third, 'alpha'
     assert_includes third, 'bravo'
+  end
+
+  def test_adds_are_concurrent_too
+    subject = Persistence.new(GSet.new)
+    other = Persistence.find(subject.key)
+    third = Persistence.find(subject.key)
+
+    t1=Thread.new {subject.add 'alpha'}
+    t2=Thread.new {other.add 'bravo'}
+    t3=Thread.new {third.add 'charlie'}
+
+    threads = [t1,t2,t3]
+    threads.map(&:join)
+    subject.reload
+
+    @keys << subject.key << other.key << third.key
+
+    # p subject.inspect
+    assert_includes subject, 'alpha'
+    assert_includes subject, 'bravo'
+    assert_includes subject, 'charlie'
+    assert_includes third, 'alpha'
+    assert_includes third, 'bravo'
+    assert_includes third, 'charlie'
   end
 
   def teardown
